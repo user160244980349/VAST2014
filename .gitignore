@@ -1,4 +1,12 @@
+# External libraries
 /venv
+
+# IDE configuration
 /.idea
-*/__pycache__
+
+# Locaal configuration
 config.py
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
