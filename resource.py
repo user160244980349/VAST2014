@@ -1,4 +1,4 @@
-from config import root
+from config import resources
 from config import postfixes
 from os import walk
 
@@ -6,7 +6,7 @@ from os import walk
 class Resource:
 
     def __init__(self):
-        self._root = root
+        self._root = resources
         self._postfixes = postfixes
 
     def root(self):
