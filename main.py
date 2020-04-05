@@ -13,7 +13,7 @@ def main():
     files = file_factory.new_files(file_paths)
 
     for file in files:
-        print(file.reader_ref)
+        print(file.content)
 
 
 if __name__ == '__main__':

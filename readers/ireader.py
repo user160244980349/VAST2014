@@ -11,6 +11,16 @@ class IReader:
         return cls.instance
 
     @abstractmethod
-    def read_line(self):
+    def open(self, path):
+        """Read line from file"""
+        pass
+
+    @abstractmethod
+    def read(self):
+        """Read line from file"""
+        pass
+
+    @abstractmethod
+    def close(self):
         """Read line from file"""
         pass

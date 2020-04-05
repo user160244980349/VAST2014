@@ -11,12 +11,16 @@ class Factory:
         ext = re.match(r'^.*\.(\w+)$', path).group(1)
 
         module = import_module(readers['module'] + "." + readers[ext])
-        reader = getattr(module, readers[ext].capitalize())
+        reader_cls = getattr(module, readers[ext].capitalize())
 
         file = File()
         file.ext = ext
         file.path = path
-        file.reader_ref = reader()
+
+        reader_obj = reader_cls()
+        reader_obj.open(path)
+        file.content = reader_obj.read()
+        reader_obj.close()
 
         return file
 
