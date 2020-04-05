@@ -1,11 +1,11 @@
-from Readers.IReader import IReader
+from readers.ireader import IReader
 
 
-class TxtReader(IReader):
+class Txt(IReader):
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
-            cls.instance = super(TxtReader, cls).__new__(cls)
+            cls.instance = super(Txt, cls).__new__(cls)
         return cls.instance
 
     def read_line(self):

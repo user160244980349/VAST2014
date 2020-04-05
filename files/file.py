@@ -7,4 +7,4 @@ class File:
         return
 
     def get_content(self):
-        self.reader_ref
+        pass

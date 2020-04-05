@@ -1,13 +1,15 @@
-from Files.FileFactory import FileFactory
-from Files.Resource import Resource
+from files.factory import Factory
+from resource import Resource
 
 
 def main():
 
-    resources = Resource()
+    print("hi")
+
+    resource = Resource()
     files = []
-    resources.get_all_file_paths(files)
-    file_factory = FileFactory()
+    resource.all_paths(files)
+    file_factory = Factory()
 
     files = file_factory.new_files(files)
 

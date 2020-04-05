@@ -1,11 +1,11 @@
-from Readers.IReader import IReader
+from readers.ireader import IReader
 
 
-class DocxReader(IReader):
+class Docx(IReader):
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
-            cls.instance = super(DocxReader, cls).__new__(cls)
+            cls.instance = super(Docx, cls).__new__(cls)
         return cls.instance
 
     def read_line(self):

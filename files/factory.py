@@ -1,9 +1,9 @@
 import re
 from config import readers
-from Files.File import File
+from files.file import File
 
 
-class FileFactory:
+class Factory:
 
     def new_file(self, path):
         file = File()
