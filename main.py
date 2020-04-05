@@ -4,8 +4,6 @@ from resource import Resource
 
 def main():
 
-    print("hi")
-
     resource = Resource()
     files = []
     resource.all_paths(files)

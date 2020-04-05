@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-root = "D:\\Study\\2cем\\интеллектуальный анализ данных\\resources"
+resources = "/home/repos/vast2014"
 
 postfixes = {
     "txt": "txt",
@@ -10,8 +10,8 @@ postfixes = {
 }
 
 readers = {
-    "txt": "TxtReader",
-    "csv": "CsvReader",
-    "docx": "DocxReader",
-    "xlsx": "XlsxReader",
+    "txt": "txt",
+    "csv": "csv",
+    "docx": "docx",
+    "xlsx": "xlsx",
 }
