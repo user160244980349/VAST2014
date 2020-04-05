@@ -1,19 +1,14 @@
 from config import resources
-from config import postfixes
 from os import walk
 
 
-class Resource:
-
-    def __init__(self):
-        self._root = resources
-        self._postfixes = postfixes
+class Resources:
 
     def root(self):
-        return self._root
+        return resources['root']
 
     def path(self, postfix):
-        return self._root + "\\" + self._postfixes[postfix]
+        return resources['root'] + "\\" + resources[postfix]
 
     def file_paths(self, postfix, files):
         for (dir_path, dir_names, file_names) in walk(self.path(postfix)):
@@ -21,6 +16,8 @@ class Resource:
         return
 
     def all_paths(self, files):
-        for postfix in self._postfixes:
+        for postfix in resources:
+            if postfix == 'root':
+                continue
             self.file_paths(postfix, files)
         return

@@ -1,18 +1,19 @@
 from files.factory import Factory
-from resource import Resource
+from resources import Resources
 
 
 def main():
 
-    resource = Resource()
-    files = []
-    resource.all_paths(files)
-    file_factory = Factory()
+    resource = Resources()
 
-    files = file_factory.new_files(files)
+    file_paths = []
+    resource.all_paths(file_paths)
+
+    file_factory = Factory()
+    files = file_factory.new_files(file_paths)
 
     for file in files:
-        file.reader_ref.read_line()
+        print(file.reader_ref)
 
 
 if __name__ == '__main__':

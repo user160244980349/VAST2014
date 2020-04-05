@@ -1,16 +1,16 @@
 from abc import ABCMeta, abstractmethod
 
 
-class IReader:
+class IParser:
 
     __metaclass__ = ABCMeta
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
-            cls.instance = super(IReader, cls).__new__(cls)
+            cls.instance = super(IParser, cls).__new__(cls)
         return cls.instance
 
     @abstractmethod
-    def read_line(self):
-        """Read line from file"""
+    def parse_line(self):
+        """Parse content line"""
         pass

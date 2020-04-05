@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-resources = "/home/repos/vast2014"
-
-postfixes = {
+resources = {
+    "root": "/home/repos/vast2014",
     "txt": "txt",
     "csv": "csv",
     "docx": "docx",
@@ -10,8 +9,14 @@ postfixes = {
 }
 
 readers = {
+    "module": 'readers',
     "txt": "txt",
     "csv": "csv",
     "docx": "docx",
     "xlsx": "xlsx",
+}
+
+parsers = {
+    "module": 'parsers',
+    "csv": "csv",
 }
