@@ -1,19 +1,8 @@
-from files.factory import Factory
-from resources import Resources
+from preprocess.upload import upload
 
 
 def main():
-
-    resource = Resources()
-
-    file_paths = []
-    resource.all_paths(file_paths)
-
-    file_factory = Factory()
-    files = file_factory.new_files(file_paths)
-
-    for file in files:
-        print(file.content)
+    upload()
 
 
 if __name__ == '__main__':

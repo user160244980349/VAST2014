@@ -1,22 +1,4 @@
 #!/usr/bin/env python
 
-resources = {
-    "root": "/home/repos/vast2014",
-    "txt": "txt",
-    "csv": "csv",
-    "docx": "docx",
-    "xlsx": "xlsx",
-}
-
-readers = {
-    "module": 'readers',
-    "txt": "txt",
-    "csv": "csv",
-    "docx": "docx",
-    "xlsx": "xlsx",
-}
-
-parsers = {
-    "module": 'parsers',
-    "csv": "csv",
-}
+resources = "D:/Study/2cем/интеллектуальный анализ данных/resources"
+database = "D:/Study/2cем/интеллектуальный анализ данных/resources/database.db"
