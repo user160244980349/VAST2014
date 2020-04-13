@@ -18,7 +18,7 @@ def connect(db):
         query = "select sqlite_version();"
         cursor.execute(query)
         record = cursor.fetchall()
-        print("SQLite Database Version is: ", record)
+        print("SQLite Database Version is:", record)
 
     except sqlite3.Error as error:
         print("Error while connecting to sqlite: ", error)
@@ -35,7 +35,7 @@ def disconnect():
         print("The SQLite connection is closed")
 
     except sqlite3.Error as error:
-        print("Error while connecting to sqlite: ", error)
+        print("Error while connecting to sqlite:", error)
 
 
 def execute(query):
@@ -49,4 +49,4 @@ def execute(query):
         return records
 
     except sqlite3.Error as error:
-        print("Error while connecting to sqlite: ", error)
+        print("Error while connecting to sqlite:", error)

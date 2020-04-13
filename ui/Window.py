@@ -8,11 +8,14 @@ class Window(QtWidgets.QMainWindow):
 
     def __init__(self):
         super(Window, self).__init__()
-        self.setWindowTitle("VAST2014MC1")
+
+        self.title = "VAST2014MC1"
         self.left = 0
         self.top = 0
         self.right = 800
         self.bot = 600
+
+        self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.right, self.bot)
         self.center()
 
