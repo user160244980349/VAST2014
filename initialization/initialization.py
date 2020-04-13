@@ -1,12 +1,11 @@
 import csv
 import os
 import config
-import database
-import fsys
-from preprocess import convert
+from tools import database, fsys
+from initialization import convert
 
 
-def upload():
+def initialization():
     fs = fsys.files(config.resources)
     converted_fs = []
 
