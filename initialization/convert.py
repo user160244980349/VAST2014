@@ -1,6 +1,6 @@
+import docx2txt as docx
 import xlrd
 import csv
-import docx2txt as docx
 
 
 def docx2txt(src, dest):
