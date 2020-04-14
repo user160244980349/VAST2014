@@ -13,15 +13,16 @@ def connect(db):
 
         connection = sqlite3.connect(db)
         cursor = connection.cursor()
-        print("Database created and Successfully Connected to SQLite")
+        # print("Database created and Successfully Connected to SQLite")
 
-        query = "select sqlite_version();"
-        cursor.execute(query)
-        record = cursor.fetchall()
-        print("SQLite Database Version is:", record)
+        # query = "select sqlite_version();"
+        # cursor.execute(query)
+        # record = cursor.fetchall()
+        # print("SQLite Database Version is:", record)
 
     except sqlite3.Error as error:
-        print("Error while connecting to sqlite: ", error)
+        # print("Error while connecting to sqlite: ", error)
+        disconnect()
 
 
 def disconnect():
@@ -32,10 +33,11 @@ def disconnect():
 
         connection.commit()
         connection.close()
-        print("The SQLite connection is closed")
+        # print("The SQLite connection is closed")
 
     except sqlite3.Error as error:
-        print("Error while connecting to sqlite:", error)
+        # print("Error while connecting to sqlite:", error)
+        pass
 
 
 def execute(query):
@@ -49,4 +51,5 @@ def execute(query):
         return records
 
     except sqlite3.Error as error:
-        print("Error while connecting to sqlite:", error)
+        # print("Error while connecting to sqlite:", error)
+        disconnect()

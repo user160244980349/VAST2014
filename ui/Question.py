@@ -6,10 +6,6 @@ class Question(QWidget):
     def __init__(self, question):
         super().__init__()
         self.question = question
-        self.left = 10
-        self.top = 10
-        self.width = 320
-        self.height = 200
 
     def ask(self):
         answer = False

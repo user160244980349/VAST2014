@@ -24,9 +24,9 @@ class TabWidget(QWidget):
         self.tabs.addTab(self.tab3, "Email graph")
 
         # Visuals widgets
-        self.docs = Docs(self)
-        self.timeline = Timeline(self)
-        self.emails = Emails(self)
+        self.docs = Docs(self.tab1)
+        self.timeline = Timeline(self.tab2)
+        self.emails = Emails(self.tab3)
 
         # Create first tab
         self.tab1.layout = QVBoxLayout(self)
