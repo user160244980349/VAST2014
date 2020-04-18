@@ -20,6 +20,9 @@ def connect(db):
         record = cursor.fetchall()
         print("SQLite Database Version is:", record)
 
+        query = "PRAGMA foreign_keys = ON;"
+        cursor.execute(query)
+
     except sqlite3.Error as error:
         print("Error while connecting to sqlite: ", error)
 
