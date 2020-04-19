@@ -10,6 +10,7 @@ from ui.Window import Window
 
 
 def main():
+
     app = QtWidgets.QApplication([])
     window = Window()
 

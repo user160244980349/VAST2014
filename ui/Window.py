@@ -19,8 +19,8 @@ class Window(QtWidgets.QMainWindow):
         self.setGeometry(self.left, self.top, self.right, self.bot)
         self.center()
 
-        self.tab_widget = TabWidget(self)
-        self.setCentralWidget(self.tab_widget)
+        self.tabWidget = TabWidget(self)
+        self.setCentralWidget(self.tabWidget)
 
     def center(self):
         qt_rectangle = self.frameGeometry()

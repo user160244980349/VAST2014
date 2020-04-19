@@ -1,4 +1,5 @@
 from preprocessing.articles import articles
+from preprocessing.emails import emails, emails_graph
 from preprocessing.texts import texts
 from tools.text import nltk_setup
 
@@ -8,4 +9,5 @@ def preprocessing():
 
     texts()
     articles()
-    # emails()
+    emails()
+    emails_graph()
