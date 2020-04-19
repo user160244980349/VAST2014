@@ -2,14 +2,12 @@
 
 # Paths to resources
 resources = "/home/user/resources"
-database = "/home/user/resources/database.db"
 
-# Files masks
-masks = {
-    "articles": r"^d+\.txt$",
-    "emails": r"^email_headers\.csv$",
-    "reports": r"^.*clean\.txt$",
-    "resumes": r"^Resume-.*\.txt$",
-    "factbooks": r"^FACTBOOK-.*\.txt$",
-    "texts": r".*\.txt$",
-}
+# Path to MC1 directory
+input_files = "/home/user/resources/MC1"
+
+# Path to converted MC1 files
+converted_files = "/home/user/resources/converted_files"
+
+# Path to database
+database = "/home/user/resources/database.db"

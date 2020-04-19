@@ -1,9 +1,11 @@
-from preprocessing.texts import texts
 from preprocessing.articles import articles
-from preprocessing.emails import emails
+from preprocessing.texts import texts
+from tools.text import nltk_setup
 
 
 def preprocessing():
+    nltk_setup()
+
     texts()
     articles()
-    emails()
+    # emails()

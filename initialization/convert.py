@@ -1,7 +1,8 @@
+import csv
 import datetime
+
 import docx2txt as docx
 import xlrd
-import csv
 
 
 def docx2txt(src, dest):
@@ -11,7 +12,6 @@ def docx2txt(src, dest):
 
 
 def xls2csv(src, dest):
-
     wb = xlrd.open_workbook(src)
     sh = wb.sheet_by_index(0)
 

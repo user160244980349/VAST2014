@@ -7,6 +7,6 @@ class Timeline(QWidget):
         super(QWidget, self).__init__(parent)
 
         self.layout = QVBoxLayout(self)
-        self.pushButton1 = QPushButton("PyQt5 button")
+        self.pushButton1 = QPushButton("Яна, это твой виджет")
         self.layout.addWidget(self.pushButton1)
         self.setLayout(self.layout)

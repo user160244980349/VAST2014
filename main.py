@@ -1,27 +1,36 @@
+import sys
+
 from PyQt5 import QtWidgets
 
-from ui.Question import Question
-from ui.Window import Window
-from preprocessing.preprocessing import preprocessing
+import config
 from initialization.initialization import initialization
-import sys
+from preprocessing.preprocessing import preprocessing
+from tools import database, fsys
+from ui.Window import Window
 
 
 def main():
-
     app = QtWidgets.QApplication([])
     window = Window()
 
-    if Question("Is init needed?").ask():
-        initialization()
-        pass
+    database.connect(config.database)
 
-    if Question("Is preprocessing needed?").ask():
+    if not fsys.islocked(config.resources + "/.initialization.lock"):
+        initialization()
+        fsys.lock(config.resources + "/.initialization.lock")
+
+    if not fsys.islocked(config.resources + "/.preprocessing.lock"):
         preprocessing()
-        pass
+        fsys.lock(config.resources + "/.preprocessing.lock")
 
     window.show()
-    sys.exit(app.exec())
+
+    sys.exit(app_exit(app))
+
+
+def app_exit(app):
+    app.exec()
+    database.disconnect()
 
 
 if __name__ == '__main__':
