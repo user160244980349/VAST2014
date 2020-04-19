@@ -10,7 +10,7 @@ def texts():
     query = "CREATE TABLE `files_preprocessed_content` (" \
             "`id` integer PRIMARY KEY AUTOINCREMENT, " \
             "`file_id` integer, " \
-            "`content` text, " \
+            "`prerocessed_content` text, " \
             "FOREIGN KEY (`file_id`) REFERENCES `all_files`(`id`))"
     database.execute(query)
 
@@ -31,6 +31,6 @@ def texts():
         rows.append('(' + ','.join(["'%s'" % file_id,
                                     "'%s'" % lemmatized_content]) + ')')
 
-    query = "INSERT INTO `files_preprocessed_content` (`file_id`, `content`) VALUES {}".format(
+    query = "INSERT INTO `files_preprocessed_content` (`file_id`, `prerocessed_content`) VALUES {}".format(
         ','.join(rows))
     database.execute(query)

@@ -12,9 +12,9 @@ def emails():
 
     query = "CREATE TABLE emailheaders_info (" \
             "`id` integer PRIMARY KEY AUTOINCREMENT, " \
-            "`email_id` integer, " \
+            "`emailheader_id` integer, " \
             "`lemmatized_subject` text, " \
-            "FOREIGN KEY (`email_id`) REFERENCES `file_emailheaders`(`id`))"
+            "FOREIGN KEY (`emailheader_id`) REFERENCES `file_emailheaders`(`id`))"
     database.execute(query)
 
     query = "SELECT `id`, `subject` " \
@@ -32,7 +32,7 @@ def emails():
             "%d" % email_id,
             "'%s'" % lemmatize(subject)]) + ')')
 
-    query = "INSERT INTO emailheaders_info (`email_id`, `lemmatized_subject`) VALUES {}".format(
+    query = "INSERT INTO emailheaders_info (`emailheader_id`, `lemmatized_subject`) VALUES {}".format(
         ','.join(rows))
     database.execute(query)
 
@@ -59,17 +59,17 @@ def emails_graph():
     database.execute(query)
 
     database.execute("PRAGMA foreign_keys = OFF;")
-    database.execute("DROP TABLE IF EXISTS `emails_references`")
+    database.execute("DROP TABLE IF EXISTS `email_references`")
     database.execute("PRAGMA foreign_keys = ON;")
 
-    query = "CREATE TABLE emails_references (" \
+    query = "CREATE TABLE email_references (" \
             "`id` integer PRIMARY KEY AUTOINCREMENT, " \
-            "`email_id` integer, " \
-            "`from` integer, " \
-            "`to` integer, " \
-            "FOREIGN KEY (`email_id`) REFERENCES `file_emailheaders`(`id`)," \
-            "FOREIGN KEY (`from`) REFERENCES `email_addresses`(`id`)," \
-            "FOREIGN KEY (`to`) REFERENCES `email_addresses`(`id`))"
+            "`emailheader_id` integer, " \
+            "`from_id` integer, " \
+            "`to_id` integer, " \
+            "FOREIGN KEY (`emailheader_id`) REFERENCES `file_emailheaders`(`id`)," \
+            "FOREIGN KEY (`from_id`) REFERENCES `email_addresses`(`id`)," \
+            "FOREIGN KEY (`to_id`) REFERENCES `email_addresses`(`id`))"
     database.execute(query)
 
     query = "SELECT `from`, `to`, `id` FROM `file_emailheaders`"
@@ -83,5 +83,5 @@ def emails_graph():
                         "(SELECT `id` FROM `email_addresses` WHERE `address` = '%s')" % address + "," +
                         "%d" % email_item[2] + ")")
 
-    query = "INSERT INTO `emails_references` (`from`, `to`, `email_id`) VALUES {}".format(','.join(rows))
+    query = "INSERT INTO `email_references` (`from_id`, `to_id`, `emailheader_id`) VALUES {}".format(','.join(rows))
     database.execute(query)
