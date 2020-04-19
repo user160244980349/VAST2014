@@ -13,7 +13,7 @@ def emails():
     query = "CREATE TABLE emailheaders_info (" \
             "`id` integer PRIMARY KEY AUTOINCREMENT, " \
             "`emailheader_id` integer, " \
-            "`lemmatized_subject` text, " \
+            "`preprocessed_subject` text, " \
             "FOREIGN KEY (`emailheader_id`) REFERENCES `file_emailheaders`(`id`))"
     database.execute(query)
 
@@ -32,7 +32,7 @@ def emails():
             "%d" % email_id,
             "'%s'" % lemmatize(subject)]) + ')')
 
-    query = "INSERT INTO emailheaders_info (`emailheader_id`, `lemmatized_subject`) VALUES {}".format(
+    query = "INSERT INTO emailheaders_info (`emailheader_id`, `preprocessed_subject`) VALUES {}".format(
         ','.join(rows))
     database.execute(query)
 

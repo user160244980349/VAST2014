@@ -13,7 +13,7 @@ def articles():
             "`file_id` integer, " \
             "`date` text, " \
             "`header` text, " \
-            "`lemmatized_header` text, " \
+            "`preprocessed_header` text, " \
             "FOREIGN KEY (`file_id`) REFERENCES `all_files`(`id`))"
     database.execute(query)
 
@@ -49,6 +49,6 @@ def articles():
             "'%s'" % header_str,
             "'%s'" % lemmatize(header_str)]) + ')')
 
-    query = "INSERT INTO `articles_info` (`file_id`, `date`, `header`, `lemmatized_header`) VALUES {}".format(
+    query = "INSERT INTO `articles_info` (`file_id`, `date`, `header`, `preprocessed_header`) VALUES {}".format(
         ','.join(rows))
     database.execute(query)
