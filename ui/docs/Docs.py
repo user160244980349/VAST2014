@@ -4,7 +4,6 @@ from PyQt5.QtCore import QObject, Qt, pyqtSignal
 from random import randint
 from tools import database
 import config
-from .untitled import Ui_Form
 
 sql_create = '''CREATE TABLE `doc_result` (
         `key` text,
