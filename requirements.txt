@@ -3,3 +3,4 @@ xlrd<=1.2.0
 PyQt5<=5.14.2
 nltk<=3.5
 python-dateutil<=2.8.1
+PyQtWebEngine==5.14.0

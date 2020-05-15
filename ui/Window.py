@@ -12,7 +12,7 @@ class Window(QtWidgets.QMainWindow):
         self.title = "VAST2014MC1"
         self.left = 0
         self.top = 0
-        self.right = 800
+        self.right = 1450
         self.bot = 600
 
         self.setWindowTitle(self.title)
