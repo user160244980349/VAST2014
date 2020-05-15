@@ -1,12 +1,17 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton
+from PyQt5.QtCore import QUrl
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
+# Fake visualization of articles timeline work
 
 class Timeline(QWidget):
-
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
 
         self.layout = QVBoxLayout(self)
-        self.pushButton1 = QPushButton("Яна, это твой виджет")
-        self.layout.addWidget(self.pushButton1)
+        self.view = QWebEngineView(self)
+        self.view.setZoomFactor(0.9)
+        self.view.setFixedHeight(600)
+        self.view.setFixedWidth(1450)
+        self.view.load(QUrl("https://google.com"))
         self.setLayout(self.layout)
