@@ -13,5 +13,5 @@ class Timeline(QWidget):
         self.view.setZoomFactor(0.9)
         self.view.setFixedHeight(600)
         self.view.setFixedWidth(1450)
-        self.view.load(QUrl("https://google.com"))
+        self.view.load(QUrl("https://web.ics.purdue.edu/~gao338/VASTChallenge2014/POKorganization.htm"))
         self.setLayout(self.layout)
