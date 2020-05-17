@@ -1,14 +1,17 @@
-from PyQt5.QtCore import QUrl
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
-from PyQt5 import uic
-# Fake visualization of articles timeline work
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'timeline.ui'
+#
+# Created by: PyQt5 UI code generator 5.13.0
+#
+# WARNING! All changes made in this file will be lost!
+
+
 from PyQt5 import QtCore, QtGui, QtWidgets
-class Timeline(QWidget):
-    def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
-        self.initUi(self)
-    def initUi(self, Form):
+
+
+class Ui_Form(object):
+    def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(1693, 719)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(Form)
@@ -87,4 +90,3 @@ class Timeline(QWidget):
         self.pushButton_3.setText(_translate("Form", "+И.С."))
         self.checkBox_4.setText(_translate("Form", "Ключевое слово"))
         self.checkBox_3.setText(_translate("Form", "Ключевое слово"))
-
