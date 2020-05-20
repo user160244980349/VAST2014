@@ -63,6 +63,18 @@ insert_timelines = '''
         date_to_sort
 '''
 
+#получение списка адресов
+database.connect(config.database)
+query = "select lastname, firstname from file_employeerecords"
+records = database.execute(query)
+
+#словарь емейлов и id
+all_names = []
+if records:
+    for record in records:
+        all_names.append(record[0])
+        all_names.append(record[1])
+
 class Timeline(QWidget):
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
@@ -200,13 +212,18 @@ class Timeline(QWidget):
     def add_events(self):
         self.btnAdd.clicked.connect(self.clickedAdd)
         self.btnFind.clicked.connect(self.clickedFind)
+        self.btnPlusIS.clicked.connect(self.clickedPlusIS)
 
-
-
+    def clickedPlusIS(self):
+        for name in all_names:
+            self.makeKeyButton(name)
 
     # обработка кнопки "+" в ключевые слова
     def clickedAdd(self):
         text = self.txtKey.text()
+        self.makeKeyButton(text)
+
+    def makeKeyButton(self, text):
         if text not in self.keyButtons.keys():
             but = QtWidgets.QPushButton(self.gbKeys)
             but.setText(text)
