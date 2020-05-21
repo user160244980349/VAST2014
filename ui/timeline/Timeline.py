@@ -1,12 +1,285 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton
+from random import randint
+from PyQt5.QtWidgets import QWidget
+from PyQt5 import QtCore, QtGui, QtWidgets
+from tools import database
+import config
 
+from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QTableWidgetItem, QHeaderView
+
+sql_create = '''CREATE TABLE `timeline_result` (
+        'date_to_sort' text,
+        'date' text,
+        `key` text,
+        `header` text,
+        `rate` integer,
+        `content` text
+        )
+'''
+
+sql_select = '''
+    SELECT date, key, SUM(rate)
+    FROM
+        `timeline_result`
+    GROUP BY date, key
+    ORDER BY date_to_sort
+'''
+
+sql_select_content =  ''' 
+    SELECT content
+    FROM
+        `timeline_result`
+    WHERE 
+        date = '{0}'
+    AND 
+        key = '{1}'    
+'''
+
+insert_timelines = '''
+    INSERT INTO 
+        timeline_result
+    SELECT
+        substr(a.date,7,4)||substr(a.date, 4,2)||substr(a.date,1,2) date_to_sort,
+         a.date,
+        '{0}', 
+        a.preprocessed_header, 
+        (LENGTH(p.prerocessed_content)-LENGTH(REPLACE(p.prerocessed_content,'{0}',''))) / {3},
+        f.content
+    FROM 
+        articles_info a
+    INNER JOIN 
+        all_files f 
+    ON  
+        f.id = a.file_id
+    INNER JOIN 
+        files_preprocessed_content p 
+    ON 
+        f.id=p.file_id
+    WHERE 
+        p.prerocessed_content like '% {0} %' 
+    AND 
+        substr(a.date,7,4)||substr(a.date, 4,2)||substr(a.date,1,2) BETWEEN '{1}' AND '{2}'  
+    ORDER BY 
+        date_to_sort
+'''
+
+#словарь адресов и id
+records = None
+all_names = None
 
 class Timeline(QWidget):
-
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
 
-        self.layout = QVBoxLayout(self)
-        self.pushButton1 = QPushButton("Яна, это твой виджет")
-        self.layout.addWidget(self.pushButton1)
-        self.setLayout(self.layout)
+        global records
+        global all_names
+
+        query = "select lastname, firstname from file_employeerecords"
+        records = database.execute(query)
+
+        all_names = []
+        #словарь емейлов и id
+        all_names = []
+        if records:
+            for record in records:
+                all_names.append(record[0])
+                all_names.append(record[1])
+
+        self.init_dynamicUI()
+        self.initUi(self)
+        self.add_events()
+
+    #динамические контролы (ключевые слова + цвета)
+    def init_dynamicUI(self):
+        self.keyButtons = {}
+        self.colors = {}
+
+    def initUi(self, Form):
+        Form.setObjectName("Form")
+        Form.resize(981, 704)
+        self.gridLayout_5 = QtWidgets.QGridLayout(Form)
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.gridLayout_3 = QtWidgets.QGridLayout()
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.scrollArea = QtWidgets.QScrollArea(Form)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 959, 321))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.tblResults = QtWidgets.QTableWidget(self.scrollAreaWidgetContents)
+        self.tblResults.setObjectName("tblResults")
+        self.tblResults.setColumnCount(0)
+        self.tblResults.setRowCount(0)
+        self.verticalLayout_2.addWidget(self.tblResults)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.gridLayout_3.addWidget(self.scrollArea, 0, 0, 1, 1)
+        self.gridLayout_5.addLayout(self.gridLayout_3, 0, 0, 1, 1)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.scrollArea_3 = QtWidgets.QScrollArea(Form)
+        self.scrollArea_3.setWidgetResizable(True)
+        self.scrollArea_3.setObjectName("scrollArea_3")
+        self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 476, 320))
+        self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_3)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.label_2 = QtWidgets.QLabel(self.scrollAreaWidgetContents_3)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout_2.addWidget(self.label_2, 5, 0, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem, 6, 0, 1, 1)
+        self.deStart = QtWidgets.QDateEdit(self.scrollAreaWidgetContents_3)
+        self.deStart.setObjectName("deStart")
+        self.gridLayout_2.addWidget(self.deStart, 4, 1, 1, 1)
+        self.deEnd = QtWidgets.QDateEdit(self.scrollAreaWidgetContents_3)
+        self.deEnd.setDateTime(QtCore.QDateTime(QtCore.QDate(2099, 1, 1), QtCore.QTime(0, 0, 0)))
+        self.deEnd.setMaximumDate(QtCore.QDate(7999, 12, 31))
+        self.deEnd.setObjectName("deEnd")
+        self.gridLayout_2.addWidget(self.deEnd, 5, 1, 1, 1)
+        self.label = QtWidgets.QLabel(self.scrollAreaWidgetContents_3)
+        self.label.setObjectName("label")
+        self.gridLayout_2.addWidget(self.label, 4, 0, 1, 1)
+        self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
+        self.horizontalLayout_2.addWidget(self.scrollArea_3)
+        self.gridLayout_4 = QtWidgets.QGridLayout()
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.gridLayout_6 = QtWidgets.QGridLayout()
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.btnPlusIS = QtWidgets.QPushButton(Form)
+        self.btnPlusIS.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        self.btnPlusIS.setObjectName("btnPlusIS")
+        self.gridLayout_6.addWidget(self.btnPlusIS, 0, 2, 1, 1)
+        self.txtKey = QtWidgets.QLineEdit(Form)
+        self.txtKey.setObjectName("txtKey")
+        self.gridLayout_6.addWidget(self.txtKey, 0, 0, 1, 1)
+        self.btnAdd = QtWidgets.QPushButton(Form)
+        self.btnAdd.setObjectName("btnAdd")
+        self.gridLayout_6.addWidget(self.btnAdd, 0, 1, 1, 1)
+        self.gridLayout_4.addLayout(self.gridLayout_6, 2, 0, 1, 1)
+        self.scrollArea_2 = QtWidgets.QScrollArea(Form)
+        self.scrollArea_2.setWidgetResizable(True)
+        self.scrollArea_2.setObjectName("scrollArea_2")
+        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 473, 283))
+        self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
+        self.gridLayout = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_2)
+        self.gridLayout.setObjectName("gridLayout")
+        self.gbKeys = QtWidgets.QGroupBox(self.scrollAreaWidgetContents_2)
+        self.gbKeys.setObjectName("gbKeys")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.gbKeys)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.scrollArea_4 = QtWidgets.QScrollArea(self.gbKeys)
+        self.scrollArea_4.setWidgetResizable(True)
+        self.scrollArea_4.setObjectName("scrollArea_4")
+        self.scrollAreaWidgetContents_4 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 447, 237))
+        self.scrollAreaWidgetContents_4.setObjectName("scrollAreaWidgetContents_4")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_4)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.vlKeys = QtWidgets.QVBoxLayout()
+        self.vlKeys.setObjectName("vlKeys")
+        self.verticalLayout_3.addLayout(self.vlKeys)
+        self.scrollArea_4.setWidget(self.scrollAreaWidgetContents_4)
+        self.verticalLayout.addWidget(self.scrollArea_4)
+        self.gridLayout.addWidget(self.gbKeys, 0, 0, 1, 1)
+        self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
+        self.gridLayout_4.addWidget(self.scrollArea_2, 3, 0, 1, 1)
+        self.gridLayout_4.setRowMinimumHeight(0, 1)
+        self.gridLayout_4.setRowMinimumHeight(1, 1)
+        self.gridLayout_4.setRowMinimumHeight(2, 1)
+        self.gridLayout_4.setRowMinimumHeight(3, 1)
+        self.gridLayout_4.setRowStretch(3, 1)
+        self.horizontalLayout_2.addLayout(self.gridLayout_4)
+        self.horizontalLayout_2.setStretch(0, 1)
+        self.horizontalLayout_2.setStretch(1, 1)
+        self.gridLayout_5.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
+        self.btnFind = QtWidgets.QPushButton(Form)
+        self.btnFind.setObjectName("btnFind")
+        self.gridLayout_5.addWidget(self.btnFind, 2, 0, 1, 1)
+
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
+
+
+    def retranslateUi(self, Form):
+        _translate = QtCore.QCoreApplication.translate
+        Form.setWindowTitle(_translate("Form", "Form"))
+        self.label_2.setText(_translate("Form", "Конец временного периода"))
+        self.label.setText(_translate("Form", "Начало временного периода"))
+        self.btnPlusIS.setText(_translate("Form", "+И.С."))
+        self.btnAdd.setText(_translate("Form", "+"))
+        self.gbKeys.setTitle(_translate("Form", "Ключевые слова"))
+        self.btnFind.setText(_translate("Form", "Найти"))
+
+    def add_events(self):
+        self.btnAdd.clicked.connect(self.clickedAdd)
+        self.btnFind.clicked.connect(self.clickedFind)
+        self.btnPlusIS.clicked.connect(self.clickedPlusIS)
+
+    def clickedPlusIS(self):
+        for name in all_names:
+            self.makeKeyButton(name)
+
+    # обработка кнопки "+" в ключевые слова
+    def clickedAdd(self):
+        text = self.txtKey.text()
+        self.makeKeyButton(text)
+
+    def makeKeyButton(self, text):
+        if text not in self.keyButtons.keys():
+            but = QtWidgets.QPushButton(self.gbKeys)
+            but.setText(text)
+            c = (randint(0, 255), randint(0, 255), randint(0, 255))
+            color = 'rgb({}, {}, {})'.format(c[0], c[1], c[2])
+            but.setStyleSheet('''
+                           background-color: rgb(200,200,200);
+                           border-style: outset;
+                           border-width: 5px;
+                           border-color: {};     
+                       '''.format(color))
+            but.clicked.connect(self.clickedKey)
+            self.vlKeys.addWidget(but)
+            self.keyButtons[text] = but
+            self.colors[text] = c
+
+    def clickedKey(self):
+        sender = self.sender()
+        del self.keyButtons[sender.text()]
+        del self.colors[sender.text()]
+        sender.deleteLater()
+
+    def clickedFind(self):
+        database.execute("DROP TABLE IF EXISTS `timeline_result`")
+        database.execute(sql_create)
+        # удалить, когда появится график
+        self.tblResults.setColumnCount(3)
+        self.tblResults.clear()
+        self.tblResults.setRowCount(0)
+
+        if self.keyButtons:
+            for key in self.keyButtons.keys():
+                start = self.deStart.date().toString('yyyyMMdd')
+                end = self.deEnd.date().toString('yyyyMMdd')
+                database.execute(insert_timelines.format(key, start, end, len(key)))
+                records = database.execute(sql_select)
+
+            # удалить, когда появится график
+            for row, form in enumerate(records):
+                self.tblResults.insertRow(row)
+                color = self.colors[form[1]]
+                for column, item in enumerate(form):
+                    col_item = QTableWidgetItem(str(item))
+                    col_item.setBackground(QColor(color[0], color[1], color[2]))
+                    content_records = database.execute(sql_select_content.format(form[0], form[1]))
+
+                    hint = ''
+                    for content in content_records:
+                        hint += content[0]
+                    col_item.setToolTip(hint)
+                    self.tblResults.setItem(row, column, col_item)
+            self.tblResults.resizeColumnsToContents()
