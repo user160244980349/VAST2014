@@ -48,12 +48,7 @@ sql_select_rate = '''
 
 sql_select_content = '''SELECT content FROM doc_result WHERE name={}'''
 
-database.connect(config.database)
-query = "SELECT `name` FROM `all_files`"
-records = database.execute(query)
 all_files = []
-for record in records:
-    all_files.append(record[0])
 
 
 class Rate(QtWidgets.QWidget):
@@ -113,6 +108,14 @@ class Docs(QtWidgets.QWidget):
 
     def __init__(self, parent):
         super(QtWidgets.QWidget, self).__init__(parent)
+
+        global all_files
+
+        query = "SELECT `name` FROM `all_files`"
+        records = database.execute(query)
+        for record in records:
+            all_files.append(record[0])
+
         self.initUI(self)
 
     def initUI(self, Form):
