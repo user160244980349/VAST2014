@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>975</width>
-    <height>909</height>
+    <width>988</width>
+    <height>896</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,8 +36,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>973</width>
-        <height>907</height>
+        <width>986</width>
+        <height>894</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2,3">
@@ -88,8 +88,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>375</width>
-                   <height>388</height>
+                   <width>380</width>
+                   <height>381</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -177,8 +177,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>375</width>
-                   <height>387</height>
+                   <width>380</width>
+                   <height>381</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -224,13 +224,13 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>578</width>
-            <height>905</height>
+            <width>586</width>
+            <height>892</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QTableWidget" name="tblResults"/>
+            <layout class="QVBoxLayout" name="vaDiagram"/>
            </item>
           </layout>
          </widget>

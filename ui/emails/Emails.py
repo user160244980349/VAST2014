@@ -1,9 +1,7 @@
 from PyQt5 import QtCore, QtWidgets
 from random import randint
-
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QTableWidgetItem, QHeaderView
-
+import numpy as np
+from ui.emails.mlpEmails import  prepare_canvas, plot_draw_lines
 from tools import database
 import config
 
@@ -73,7 +71,7 @@ class Emails(QtWidgets.QWidget):
     def initUI(self, Form):
         #***  статические компоненты из дизайнера******
         Form.setObjectName("Form")
-        Form.resize(975, 909)
+        Form.resize(988, 896)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(Form)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -81,7 +79,7 @@ class Emails(QtWidgets.QWidget):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 973, 907))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 986, 894))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -100,7 +98,7 @@ class Emails(QtWidgets.QWidget):
         self.saUsers.setWidgetResizable(True)
         self.saUsers.setObjectName("saUsers")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 375, 388))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(0, 0, 380, 381))
         self.scrollAreaWidgetContents_3.setObjectName("scrollAreaWidgetContents_3")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -141,7 +139,7 @@ class Emails(QtWidgets.QWidget):
         self.saKeys.setWidgetResizable(True)
         self.saKeys.setObjectName("saKeys")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 375, 387))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 380, 381))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
@@ -165,17 +163,13 @@ class Emails(QtWidgets.QWidget):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollArea_4.setObjectName("scrollArea_4")
         self.scrollAreaWidgetContents_4 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 578, 905))
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(0, 0, 586, 892))
         self.scrollAreaWidgetContents_4.setObjectName("scrollAreaWidgetContents_4")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        #!!! удалить для графика
-        self.tblResults = QtWidgets.QTableWidget(self.scrollAreaWidgetContents_4)
-        self.tblResults.setObjectName("tblResults")
-        self.tblResults.setColumnCount(0)
-        self.tblResults.setRowCount(0)
-        # конец удаления
-        self.verticalLayout_3.addWidget(self.tblResults)
+        self.vaDiagram = QtWidgets.QVBoxLayout()
+        self.vaDiagram.setObjectName("vaDiagram")
+        self.verticalLayout_3.addLayout(self.vaDiagram)
         self.scrollArea_4.setWidget(self.scrollAreaWidgetContents_4)
         self.horizontalLayout_3.addWidget(self.scrollArea_4)
         self.horizontalLayout_3.setStretch(0, 2)
@@ -186,6 +180,10 @@ class Emails(QtWidgets.QWidget):
 
         #***список #адресов**********
         self.add_addresses(Form)
+
+        # создание канвы для графика
+        self.canvasEmails = prepare_canvas(layout=self.vaDiagram)
+        self.canvasEmails.setVisible(True)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -256,16 +254,26 @@ class Emails(QtWidgets.QWidget):
         else:
             database.execute(insert_doc.format('', addresses))
         records = database.execute(sql_select)
-        #удалить, когда появится график
-        self.tblResults.setColumnCount(3)
-        self.tblResults.clear()
-        self.tblResults.setRowCount(0)
-        for row, form in enumerate(records):
-            self.tblResults.insertRow(row)
-            color = self.colors[form[0]]
-            for column, item in enumerate(form):
-                col_item = QTableWidgetItem(str(item))
-                col_item.setBackground(QColor(color[0], color[1], color[2]))
-                self.tblResults.setItem(row, column, col_item)
-        self.tblResults.resizeColumnsToContents()
+
+        names = {}
+        flux = []
+        for item in records:
+            sender, recipient, subject = tuple(item)
+            if sender not in names:
+                names[sender] = len(names.items())
+            if recipient not in names:
+                names[recipient] = len(names.items())
+
+        flux = np.zeros((len(names.items()), len(names.items())))
+        for item in records:
+            sender, recipient, subject = tuple(item)
+            sender_idx = names[sender]
+            recipient_idx = names[recipient]
+            flux[sender_idx][recipient_idx] +=1
+
+        names = list(names.keys())
+        colors = [self.colors[name] for name in names ]
+        self.canvasEmails.setVisible(False)
+        plot_draw_lines([names, colors, flux], self.canvasEmails)
+        self.canvasEmails.setVisible(True)
 
