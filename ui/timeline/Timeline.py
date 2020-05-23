@@ -1,11 +1,14 @@
 from random import randint
+import datetime
 from PyQt5.QtWidgets import QWidget
 from PyQt5 import QtCore, QtGui, QtWidgets
 from tools import database
 import config
-
+from ui.timeline.mlpTimeline import prepare_canvas, plot_draw_lines
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QTableWidgetItem, QHeaderView
+
+
 
 sql_create = '''CREATE TABLE `timeline_result` (
         'date_to_sort' text,
@@ -18,11 +21,11 @@ sql_create = '''CREATE TABLE `timeline_result` (
 '''
 
 sql_select = '''
-    SELECT date, key, SUM(rate)
+    SELECT date_to_sort, key, SUM(rate)
     FROM
         `timeline_result`
     GROUP BY date, key
-    ORDER BY date_to_sort
+    ORDER BY key, date_to_sort
 '''
 
 sql_select_content =  ''' 
@@ -35,6 +38,16 @@ sql_select_content =  '''
         key = '{1}'    
 '''
 
+sql_select_header =  ''' 
+    SELECT header
+    FROM
+        `timeline_result`
+    WHERE 
+        date_to_sort = '{0}'
+    AND 
+        key = '{1}'    
+'''
+
 insert_timelines = '''
     INSERT INTO 
         timeline_result
@@ -42,7 +55,7 @@ insert_timelines = '''
         substr(a.date,7,4)||substr(a.date, 4,2)||substr(a.date,1,2) date_to_sort,
          a.date,
         '{0}', 
-        a.preprocessed_header, 
+        a.header, 
         (LENGTH(p.prerocessed_content)-LENGTH(REPLACE(p.prerocessed_content,'{0}',''))) / {3},
         f.content
     FROM 
@@ -63,12 +76,12 @@ insert_timelines = '''
         date_to_sort
 '''
 
-#получение списка адресов
+#получение списка имен собственных
 database.connect(config.database)
 query = "select lastname, firstname from file_employeerecords"
 records = database.execute(query)
 
-#словарь емейлов и id
+#словарь  списка имен собственных
 all_names = []
 if records:
     for record in records:
@@ -101,12 +114,11 @@ class Timeline(QWidget):
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 959, 321))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.tblResults = QtWidgets.QTableWidget(self.scrollAreaWidgetContents)
-        self.tblResults.setObjectName("tblResults")
-        self.tblResults.setColumnCount(0)
-        self.tblResults.setRowCount(0)
-        self.verticalLayout_2.addWidget(self.tblResults)
+        self.vlMlpLayout = QtWidgets.QVBoxLayout()
+        self.vlMlpLayout.setObjectName("vlMlpLayout")
+        self.verticalLayout_2.addLayout(self.vlMlpLayout)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_3.addWidget(self.scrollArea, 0, 0, 1, 1)
         self.gridLayout_5.addLayout(self.gridLayout_3, 0, 0, 1, 1)
@@ -194,7 +206,9 @@ class Timeline(QWidget):
         self.btnFind = QtWidgets.QPushButton(Form)
         self.btnFind.setObjectName("btnFind")
         self.gridLayout_5.addWidget(self.btnFind, 2, 0, 1, 1)
-
+        # создание канвы для графика
+        self.canvasTimeline = prepare_canvas(layout=self.vlMlpLayout)
+        self.canvasTimeline.setVisible(True)
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -249,30 +263,31 @@ class Timeline(QWidget):
     def clickedFind(self):
         database.execute("DROP TABLE IF EXISTS `timeline_result`")
         database.execute(sql_create)
-        # удалить, когда появится график
-        self.tblResults.setColumnCount(3)
-        self.tblResults.clear()
-        self.tblResults.setRowCount(0)
-
         if self.keyButtons:
             for key in self.keyButtons.keys():
                 start = self.deStart.date().toString('yyyyMMdd')
                 end = self.deEnd.date().toString('yyyyMMdd')
                 database.execute(insert_timelines.format(key, start, end, len(key)))
-                records = database.execute(sql_select)
 
-            # удалить, когда появится график
-            for row, form in enumerate(records):
-                self.tblResults.insertRow(row)
-                color = self.colors[form[1]]
-                for column, item in enumerate(form):
-                    col_item = QTableWidgetItem(str(item))
-                    col_item.setBackground(QColor(color[0], color[1], color[2]))
-                    content_records = database.execute(sql_select_content.format(form[0], form[1]))
+            #получение результатов из базы
+            records = database.execute(sql_select)
 
-                    hint = ''
-                    for content in content_records:
-                        hint += content[0]
-                    col_item.setToolTip(hint)
-                    self.tblResults.setItem(row, column, col_item)
-            self.tblResults.resizeColumnsToContents()
+            #подготовка данных для графика
+            lines = {}
+            w_key = ''
+            for item in records:
+                date, key, rate = tuple(item)
+                if key not in lines:
+                    lines[key] = (self.colors[key], [], [], [])
+                l = lines[key]
+                date_d = datetime.datetime.strptime(date, "%Y%m%d").date()
+                l[1].append(date_d)
+                l[2].append(rate)
+                header_records = database.execute(sql_select_header.format(date, key))
+                hint = ''
+                for header in header_records:
+                    hint += header[0]
+                l[3].append(hint)
+            self.canvasTimeline.setVisible(False)
+            plot_draw_lines(lines, self.canvasTimeline)
+            self.canvasTimeline.setVisible(True)
