@@ -51,20 +51,21 @@ def plot_draw_lines(data, canvas):
          y = np.array(item[2])
          coeffs = np.polyfit(x, y, 5)
          poly_eqn = np.poly1d(coeffs)
-         y_hat = poly_eqn(x)
+         y_hat = poly_eqn(x)-0.01
          xx = np.linspace(x.min(), x.max(), len(x))
-         pl = ax.plot(item[1], y, 'ro', c=color, label=key)
+
 
          lines[key] = item[3]
          ax.plot(item[1], y_hat, c=color, label=key+'_line')
          ax.fill_between(item[1], y_hat , color=color, alpha=0.2)
+         pl = ax.plot(item[1], y, 'ro', c=color, label=key)
      labels = lines
      mplcursors.cursor(ax).connect("add", get_plot_label)
      canvas.draw()
 
 def get_plot_label(sel):
-    if sel.target.index == int(sel.target.index):
-         text = labels[sel.artist.get_label()][sel.target.index]
-         sel.annotation.set_text(text)
+    if sel.target.index == int(sel.target.index) and sel.artist.get_label() in labels:
+        text = labels[sel.artist.get_label()][sel.target.index]
+        sel.annotation.set_text(text)
     else:
         sel.annotation.set_text('')

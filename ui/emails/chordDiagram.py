@@ -169,7 +169,7 @@ def chordDiagram(X, ax, colors=None, width=0.1, pad=2, chordwidth=0.7):
             print('x is too large! Use x smaller than 10')
         colors = [hex2rgb(random.choice(colors)) for i in range(len(x))]
 
-    # find position for each start and end
+    # find position for each start and end (angle)
     y = x/np.sum(x).astype(float) * (360 - pad*len(x))
 
     pos = {}
@@ -182,11 +182,14 @@ def chordDiagram(X, ax, colors=None, width=0.1, pad=2, chordwidth=0.7):
         angle = 0.5*(start+end)
         #print(start, end, angle)
         if -30 <= angle <= 210:
-            angle -= 90
+            angle -= 0
         else:
-            angle -= 270
+            angle -= 180
         nodePos.append(tuple(polar2xy(1.1, 0.5*(start+end)*np.pi/180.)) + (angle,))
-        z = (X[i, :]/x[i].astype(float)) * (end - start)
+        if (x[i].astype(float)!=0.0):
+            z = (X[i, :]/x[i].astype(float)) * (end - start)
+        else:
+            z = (X[i, :] / 1.0) * (end - start)
         ids = np.argsort(z)
         z0 = start
         for j in ids:
@@ -197,14 +200,15 @@ def chordDiagram(X, ax, colors=None, width=0.1, pad=2, chordwidth=0.7):
     for i in range(len(x)):
         start, end = arc[i]
         IdeogramArc(start=start, end=end, radius=1.0, ax=ax, color=colors[i], width=width)
-        start, end = pos[(i,i)]
-        selfChordArc(start, end, radius=1.-width, color=colors[i], chordwidth=chordwidth*0.7, ax=ax)
-        for j in range(i):
-            color = colors[i]
-            if X[i, j] > X[j, i]:
-                color = colors[j]
-            start1, end1 = pos[(i,j)]
-            start2, end2 = pos[(j,i)]
-            ChordArc(start1, end1, start2, end2, radius=1.-width, color=colors[i], chordwidth=chordwidth, ax=ax)
+        if (start != end):
+            start, end = pos[(i,i)]
+            selfChordArc(start, end, radius=1.-width, color=colors[i], chordwidth=chordwidth*0.7, ax=ax)
+            for j in range(i):
+                color = colors[i]
+                if X[i, j] > X[j, i]:
+                    color = colors[j]
+                start1, end1 = pos[(i,j)]
+                start2, end2 = pos[(j,i)]
+                ChordArc(start1, end1, start2, end2, radius=1.-width, color=colors[i], chordwidth=chordwidth, ax=ax)
 
     return nodePos

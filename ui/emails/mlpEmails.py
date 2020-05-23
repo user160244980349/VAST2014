@@ -45,7 +45,7 @@ def plot_draw_lines(data, canvas):
      ax.axis('off')
      prop = dict(fontsize=16 * 0.8, ha='center', va='center')
      for i in range(len(names)):
-         ax.text(nodePos[i][0], nodePos[i][1], names[i].split('@')[0], rotation=90+nodePos[i][2], **prop) #nodePos[i][2]
+         ax.text(nodePos[i][0], nodePos[i][1], names[i].split('@')[0], rotation=nodePos[i][2], **prop) #nodePos[i][2]
      #mplcursors.cursor(ax).connect("add", get_plot_label)
      canvas.draw()
 
