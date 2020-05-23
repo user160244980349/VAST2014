@@ -63,9 +63,9 @@ insert_timelines = '''
         date_to_sort
 '''
 
-#словарь адресов и id
 records = None
 all_names = None
+
 
 class Timeline(QWidget):
     def __init__(self, parent):
@@ -77,8 +77,6 @@ class Timeline(QWidget):
         query = "select lastname, firstname from file_employeerecords"
         records = database.execute(query)
 
-        all_names = []
-        #словарь емейлов и id
         all_names = []
         if records:
             for record in records:

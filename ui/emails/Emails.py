@@ -46,9 +46,9 @@ sql_select_rate = '''
 
 sql_select_content = '''SELECT content FROM doc_result WHERE name={}'''
 
-#словарь емейлов и id
 records = None
 all_addresses = None
+
 
 class Emails(QtWidgets.QWidget):
 
