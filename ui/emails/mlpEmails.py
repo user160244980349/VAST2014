@@ -37,6 +37,7 @@ def plot_single_empty_graph():
 
 
 def plot_draw_lines(data, canvas):
+     hover = False
      ax = canvas.figure.get_children()[1]
      ax.cla()
      names, colors, flux, headers = tuple(data)
@@ -45,7 +46,7 @@ def plot_draw_lines(data, canvas):
      prop = dict(fontsize=16 * 0.8, ha='center', va='center')
      for i in range(len(names)):
          ax.text(nodePos[i][0], nodePos[i][1], names[i].split('@')[0], rotation=nodePos[i][2], **prop)
-     mplcursors.cursor(ax, hover=True).connect("add", get_plot_label)
+     mplcursors.cursor(ax, hover=hover).connect("add", get_plot_label)
      canvas.draw()
 
 def get_plot_label(sel):
