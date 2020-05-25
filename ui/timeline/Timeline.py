@@ -282,7 +282,6 @@ class Timeline(QWidget):
 
             #подготовка данных для графика
             lines = {}
-            w_key = ''
             for item in records:
                 date, key, rate = tuple(item)
                 if key not in lines:
