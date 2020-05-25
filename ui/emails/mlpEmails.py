@@ -39,13 +39,18 @@ def plot_single_empty_graph():
 def plot_draw_lines(data, canvas):
      ax = canvas.figure.get_children()[1]
      ax.cla()
-     names, colors, flux = tuple(data)
-     # nodePos = chordDiagram(flux, ax, colors=[hex2rgb(x) for x in ['#666666', '#66ff66', '#ff6666', '#6666ff']])
-     nodePos = chordDiagram(flux, ax, [hex2rgb('#%02x%02x%02x' % (color[0], color[1], color[2]) ) for color in colors])
+     names, colors, flux, headers = tuple(data)
+     nodePos = chordDiagram(flux, ax, [hex2rgb('#%02x%02x%02x' % (color[0], color[1], color[2]) ) for color in colors], headers = headers)
      ax.axis('off')
      prop = dict(fontsize=16 * 0.8, ha='center', va='center')
      for i in range(len(names)):
-         ax.text(nodePos[i][0], nodePos[i][1], names[i].split('@')[0], rotation=nodePos[i][2], **prop) #nodePos[i][2]
-     #mplcursors.cursor(ax).connect("add", get_plot_label)
+         ax.text(nodePos[i][0], nodePos[i][1], names[i].split('@')[0], rotation=nodePos[i][2], **prop)
+     mplcursors.cursor(ax, hover=True).connect("add", get_plot_label)
      canvas.draw()
+
+def get_plot_label(sel):
+    if sel.artist.get_label() != '':
+        sel.annotation.set_text(sel.artist.get_label())
+    else:
+        sel.annotation.set_visible(False)
 

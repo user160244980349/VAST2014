@@ -53,7 +53,7 @@ def IdeogramArc(start=0, end=60, radius=1.0, width=0.2, ax=None, color=(1,0,0)):
         ax.add_patch(patch)
 
 
-def ChordArc(start1=0, end1=60, start2=180, end2=240, radius=1.0, chordwidth=0.7, ax=None, color=(1,0,0)):
+def ChordArc(start1=0, end1=60, start2=180, end2=240, radius=1.0, chordwidth=0.7, ax=None, color=(1,0,0), label=''):
     # start, end should be in [0, 360)
     if start1 > end1:
         start1, end1 = end1, start1
@@ -101,7 +101,7 @@ def ChordArc(start1=0, end1=60, start2=180, end2=240, radius=1.0, chordwidth=0.7
         return verts, codes
     else:
         path = Path(verts, codes)
-        patch = patches.PathPatch(path, facecolor=color+(0.5,), edgecolor=color+(0.4,), lw=LW)
+        patch = patches.PathPatch(path, facecolor=color+(0.5,), edgecolor=color+(0.4,), lw=LW, label=label )
         ax.add_patch(patch)
 
 def selfChordArc(start=0, end=60, radius=1.0, chordwidth=0.7, ax=None, color=(1,0,0)):
@@ -138,7 +138,7 @@ def selfChordArc(start=0, end=60, radius=1.0, chordwidth=0.7, ax=None, color=(1,
         patch = patches.PathPatch(path, facecolor=color+(0.5,), edgecolor=color+(0.4,), lw=LW)
         ax.add_patch(patch)
 
-def chordDiagram(X, ax, colors=None, width=0.1, pad=2, chordwidth=0.7):
+def chordDiagram(X, ax, colors=None, width=0.1, pad=2, chordwidth=0.7, headers=['']):
     """Plot a chord diagram
 
     Parameters
@@ -200,7 +200,7 @@ def chordDiagram(X, ax, colors=None, width=0.1, pad=2, chordwidth=0.7):
     for i in range(len(x)):
         start, end = arc[i]
         IdeogramArc(start=start, end=end, radius=1.0, ax=ax, color=colors[i], width=width)
-        if (start != end):
+        if start != end:
             start, end = pos[(i,i)]
             selfChordArc(start, end, radius=1.-width, color=colors[i], chordwidth=chordwidth*0.7, ax=ax)
             for j in range(i):
@@ -209,6 +209,6 @@ def chordDiagram(X, ax, colors=None, width=0.1, pad=2, chordwidth=0.7):
                     color = colors[j]
                 start1, end1 = pos[(i,j)]
                 start2, end2 = pos[(j,i)]
-                ChordArc(start1, end1, start2, end2, radius=1.-width, color=colors[i], chordwidth=chordwidth, ax=ax)
+                ChordArc(start1, end1, start2, end2, radius=1.-width, color=colors[i], chordwidth=chordwidth, ax=ax, label='\n'.join(headers[i][j]))
 
     return nodePos

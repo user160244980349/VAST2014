@@ -6,3 +6,5 @@ python-dateutil<=2.8.1
 PyQtWebEngine==5.14.0
 matplotlib==3.2.1
 numpy==1.18.4
+
+mplcursors~=0.3

@@ -209,7 +209,8 @@ class Emails(QtWidgets.QWidget):
         for address in all_addresses.keys():
             check = QtWidgets.QCheckBox(self.gbUsers)
             check.setChecked(True)
-            c = (randint(0, 255), randint(0, 255), randint(0, 255))
+            #начальное значение = 75 для читаемости текста на фоне элемента
+            c = (randint(75, 255), randint(75, 255), randint(75, 255))
             color = 'rgb({}, {}, {})'.format(c[0], c[1], c[2])
             check.setStyleSheet('''
                             background-color: {}; 
@@ -264,16 +265,18 @@ class Emails(QtWidgets.QWidget):
             if recipient not in names:
                 names[recipient] = len(names.items())
 
-        flux = np.zeros((len(names.items()), len(names.items())))
+        N = len(names.items())
+        flux = np.zeros((N, N))
+        headers = [[[''] for x in range(N)] for x in range(N)]
         for item in records:
             sender, recipient, subject = tuple(item)
             sender_idx = names[sender]
             recipient_idx = names[recipient]
-            flux[sender_idx][recipient_idx] +=1
-
+            flux[sender_idx][recipient_idx] += 1
+            headers[sender_idx][recipient_idx].append(subject)
         names = list(names.keys())
         colors = [self.colors[name] for name in names ]
         self.canvasEmails.setVisible(False)
-        plot_draw_lines([names, colors, flux], self.canvasEmails)
+        plot_draw_lines([names, colors, flux, headers], self.canvasEmails)
         self.canvasEmails.setVisible(True)
 
