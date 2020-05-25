@@ -1,9 +1,15 @@
+import datetime
+
 from PyQt5.QtWidgets import QSizePolicy, QVBoxLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib import pyplot as plt
+from matplotlib.dates import drange
 import mplcursors
 import numpy as np
 import matplotlib.dates as mdates
+from scipy.optimize import curve_fit
+
+spline = False
 labels = {}
 class MlpTimelineCanvas(FigureCanvasQTAgg):
     '''
@@ -38,6 +44,9 @@ def plot_single_empty_graph():
     return fig, axes
 
 
+def func(t, A, h, T, phi):
+    return A*np.exp(-h*t)*np.sin(2*np.pi/T*t + phi)
+
 
 def plot_draw_lines(data, canvas):
      ax = canvas.figure.get_children()[1]
@@ -54,9 +63,14 @@ def plot_draw_lines(data, canvas):
          y_hat = poly_eqn(x)
          xx = np.linspace(x.min(), x.max(), len(x))
          lines[key] = item[3]
-         ax.plot(item[1], y_hat, c=color, label=key+'_line')
-         ax.fill_between(item[1], y_hat , color=color, alpha=0.2)
+         if spline:
+             ax.plot(xx, y_hat, c=color, label=key + '_line')
+             ax.fill_between(xx, y_hat, color=color, alpha=0.2)
+         else:
+             ax.plot(item[1], y_hat, c=color, label=key + '_line')
+             ax.fill_between(item[1], y_hat, color=color, alpha=0.2)
          pl = ax.plot(item[1], y, 'ro', c=color, label=key)
+
      labels = lines
      mplcursors.cursor(ax).connect("add", get_plot_label)
      canvas.draw()
