@@ -7,7 +7,6 @@ from matplotlib.dates import drange
 import mplcursors
 import numpy as np
 import matplotlib.dates as mdates
-from scipy.optimize import curve_fit
 
 spline = False
 labels = {}
