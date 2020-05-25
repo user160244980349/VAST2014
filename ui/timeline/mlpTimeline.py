@@ -59,12 +59,12 @@ def plot_draw_lines(data, canvas):
          y = np.array(item[2])
          coeffs = np.polyfit(x, y, 5)
          poly_eqn = np.poly1d(coeffs)
-         y_hat = poly_eqn(x) - 0.005
+         y_hat =  np.array([a - 0.005 if a > 0.005 else a for a in poly_eqn(x)])
          xx = np.linspace(x.min(), x.max(), len(x))
          lines[key] = item[3]
          if spline:
              ax.plot(xx, y_hat, c=color, label=key + '_line')
-             ax.fill_between(xx, y_hat, color=color, alpha=0.2)
+             ax.fill_between(xx, y_hat, y2=0, color=color, alpha=0.2)
          else:
              ax.plot(item[1], y_hat, c=color, label=key + '_line')
              ax.fill_between(item[1], y_hat, color=color, alpha=0.2)

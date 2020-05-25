@@ -246,6 +246,7 @@ class Timeline(QWidget):
         self.makeKeyButton(text)
 
     def makeKeyButton(self, text):
+        text = text.lower()
         if text not in self.keyButtons.keys():
             but = QtWidgets.QPushButton(self.gbKeys)
             but.setText(text)
