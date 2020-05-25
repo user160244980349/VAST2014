@@ -59,7 +59,7 @@ def plot_draw_lines(data, canvas):
          y = np.array(item[2])
          coeffs = np.polyfit(x, y, 5)
          poly_eqn = np.poly1d(coeffs)
-         y_hat = poly_eqn(x)
+         y_hat = poly_eqn(x) - 0.005
          xx = np.linspace(x.min(), x.max(), len(x))
          lines[key] = item[3]
          if spline:
