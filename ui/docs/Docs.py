@@ -4,6 +4,7 @@ from PyQt5.QtCore import QObject, Qt, pyqtSignal
 from random import randint
 from tools import database
 import config
+import nltk
 
 sql_create = '''CREATE TABLE `doc_result` (
         `key` text,
@@ -55,6 +56,13 @@ all_files = []
 for record in records:
     all_files.append(record[0])
 
+names = []
+r = database.execute("SELECT address from email_addresses")
+for i in r:
+    ii = i[0].split('@')
+    ii = (ii[0].lower().split('.'))
+    names.append(ii[0])
+    names.append(ii[1])
 
 class Rate(QtWidgets.QWidget):
     def __init__(self):
@@ -138,7 +146,7 @@ class Docs(QtWidgets.QWidget):
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.verticalLayout_4.addWidget(self.groupBox_2)
         self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
-        self.gridLayout.addWidget(self.scrollArea_3, 2, 0, 1, 2)
+        self.gridLayout.addWidget(self.scrollArea_3, 3, 0, 1, 2)
         self.scrollArea = QtWidgets.QScrollArea(Form)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
@@ -153,7 +161,7 @@ class Docs(QtWidgets.QWidget):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.verticalLayout.addWidget(self.groupBox)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        self.gridLayout.addWidget(self.scrollArea, 1, 0, 1, 2)
+        self.gridLayout.addWidget(self.scrollArea, 2, 0, 1, 2)
         self.scrollArea_2 = QtWidgets.QScrollArea(Form)
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
@@ -168,7 +176,7 @@ class Docs(QtWidgets.QWidget):
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.verticalLayout_6.addWidget(self.groupBox_3,  0, QtCore.Qt.AlignTop)
         self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
-        self.gridLayout.addWidget(self.scrollArea_2, 0, 2, 4, 1)
+        self.gridLayout.addWidget(self.scrollArea_2, 0, 2, 5, 1)
         self.verticalLayout_3.addLayout(self.gridLayout)
 
 
@@ -195,14 +203,23 @@ class Docs(QtWidgets.QWidget):
         # Кнопка найти
         self.pushButton_2 = QtWidgets.QPushButton(Form)
         self.pushButton_2.setObjectName("pushButton_2")
-        self.gridLayout.addWidget(self.pushButton_2, 3, 0, 1, 2)
+        self.gridLayout.addWidget(self.pushButton_2, 4, 0, 1, 2)
         # Кнопка добавить
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setObjectName("pushButton")
         self.gridLayout.addWidget(self.pushButton, 0, 1, 1, 1)
 
+        self.combo = QtWidgets.QComboBox(Form)
+        self.combo.addItems(names)
+        self.gridLayout.addWidget(self.combo, 1, 0, 1, 1)
+
+        self.pushButton_10 = QtWidgets.QPushButton(Form)
+        self.pushButton_10.setObjectName("pushButton_10")
+        self.gridLayout.addWidget(self.pushButton_10, 1, 1, 1, 1)
+
         ''' Сигналы '''
         self.pushButton.clicked.connect(self.clickedAdd)
+        self.pushButton_10.clicked.connect(self.clickedAdd2)
         self.pushButton_2.clicked.connect(self.clickedFind)
 
         self.retranslateUi(Form)
@@ -211,6 +228,23 @@ class Docs(QtWidgets.QWidget):
 
     def clickedAdd(self):
         text = self.lineEdit.text()
+        if text not in self.keyButtons.keys():
+            but = QtWidgets.QPushButton(self.groupBox)
+            but.setText(text)
+            color = 'rgb({}, {}, {})'.format(randint(0, 255), randint(0, 255), randint(0,255))
+            but.setStyleSheet('''
+                background-color: rgb(200,200,200);
+                border-style: outset;
+                border-width: 5px;
+                border-color: {};     
+            '''.format(color))
+            but.clicked.connect(self.clickedKey)
+            self.verticalLayout_2.addWidget(but)
+            self.keyButtons[text] = but
+            self.colors[text] = color
+
+    def clickedAdd2(self):
+        text = self.combo.currentText()
         if text not in self.keyButtons.keys():
             but = QtWidgets.QPushButton(self.groupBox)
             but.setText(text)
@@ -301,5 +335,5 @@ class Docs(QtWidgets.QWidget):
         self.pushButton.setText(_translate("Form", "Добавить"))
         self.groupBox.setTitle(_translate("Form", "Ключевые слова"))
         self.pushButton_2.setText(_translate("Form", "Найти"))
+        self.pushButton_10.setText(_translate("Form", "Добавить"))
         self.groupBox_3.setTitle(_translate("Form", "Визуализация"))
-
