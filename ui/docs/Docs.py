@@ -1,10 +1,10 @@
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtGui import QPainter, QFont, QColor, QPen
-from PyQt5.QtCore import QObject, Qt, pyqtSignal
 from random import randint
+
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPainter, QFont, QColor, QPen
+
 from tools import database
-import config
-import nltk
 
 sql_create = '''CREATE TABLE `doc_result` (
         `key` text,
@@ -50,14 +50,8 @@ sql_select_rate = '''
 sql_select_content = '''SELECT content FROM doc_result WHERE name={}'''
 
 all_files = []
-
 names = []
-r = database.execute("SELECT address from email_addresses")
-for i in r:
-    ii = i[0].split('@')
-    ii = (ii[0].lower().split('.'))
-    names.append(ii[0])
-    names.append(ii[1])
+
 
 class Rate(QtWidgets.QWidget):
     def __init__(self):
@@ -97,12 +91,14 @@ class Rate(QtWidgets.QWidget):
         step = int(round(w / self.max))
         start = 0
         for i in self.value.keys():
-            color = self.colors[i].replace('r', '').replace('g', '').replace('b', '').replace('(', '').replace(')', '').replace(',', '').split()
-            #print(self.value)
-            end = start + step*self.value[i]
+            color = self.colors[i].replace('r', '').replace('g', '').replace('b', '').replace('(', '').replace(')',
+                                                                                                               '').replace(
+                ',', '').split()
+            # print(self.value)
+            end = start + step * self.value[i]
             qp.setPen(QColor(255, 255, 255))
             qp.setBrush(QColor(int(color[0]), int(color[1]), int(color[2])))
-            qp.drawRect(start, 0, start + step*self.value[i], h)
+            qp.drawRect(start, 0, start + step * self.value[i], h)
             start = end
 
         pen = QPen(QColor(20, 20, 20), 1, Qt.SolidLine)
@@ -118,11 +114,19 @@ class Docs(QtWidgets.QWidget):
         super(QtWidgets.QWidget, self).__init__(parent)
 
         global all_files
+        global names
 
         query = "SELECT `name` FROM `all_files`"
         records = database.execute(query)
         for record in records:
             all_files.append(record[0])
+
+        r = database.execute("SELECT address from email_addresses")
+        for i in r:
+            ii = i[0].split('@')
+            ii = (ii[0].lower().split('.'))
+            names.append(ii[0])
+            names.append(ii[1])
 
         self.initUI(self)
 
@@ -177,11 +181,10 @@ class Docs(QtWidgets.QWidget):
         self.groupBox_3.setObjectName("groupBox_3")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.groupBox_3)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.verticalLayout_6.addWidget(self.groupBox_3,  0, QtCore.Qt.AlignTop)
+        self.verticalLayout_6.addWidget(self.groupBox_3, 0, QtCore.Qt.AlignTop)
         self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
         self.gridLayout.addWidget(self.scrollArea_2, 0, 2, 5, 1)
         self.verticalLayout_3.addLayout(self.gridLayout)
-
 
         '''То, что нужно настраивать'''
 
@@ -190,7 +193,6 @@ class Docs(QtWidgets.QWidget):
         self.colors = {}
         self.contentButtons = {}
         self.rate = {}
-
 
         for i in all_files:
             check = QtWidgets.QCheckBox(self.groupBox_2)
@@ -228,13 +230,12 @@ class Docs(QtWidgets.QWidget):
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-
     def clickedAdd(self):
         text = self.lineEdit.text()
         if text not in self.keyButtons.keys():
             but = QtWidgets.QPushButton(self.groupBox)
             but.setText(text)
-            color = 'rgb({}, {}, {})'.format(randint(0, 255), randint(0, 255), randint(0,255))
+            color = 'rgb({}, {}, {})'.format(randint(0, 255), randint(0, 255), randint(0, 255))
             but.setStyleSheet('''
                 background-color: rgb(200,200,200);
                 border-style: outset;
@@ -251,7 +252,7 @@ class Docs(QtWidgets.QWidget):
         if text not in self.keyButtons.keys():
             but = QtWidgets.QPushButton(self.groupBox)
             but.setText(text)
-            color = 'rgb({}, {}, {})'.format(randint(0, 255), randint(0, 255), randint(0,255))
+            color = 'rgb({}, {}, {})'.format(randint(0, 255), randint(0, 255), randint(0, 255))
             but.setStyleSheet('''
                 background-color: rgb(200,200,200);
                 border-style: outset;
@@ -263,20 +264,18 @@ class Docs(QtWidgets.QWidget):
             self.keyButtons[text] = but
             self.colors[text] = color
 
-
     def clickedKey(self):
         sender = self.sender()
         del self.keyButtons[sender.text()]
         del self.colors[sender.text()]
         sender.deleteLater()
 
-
     def clickedFind(self):
         if self.contentButtons:
             for i in self.contentButtons.keys():
                 self.contentButtons[i].deleteLater()
                 self.rate[i].deleteLater()
-                #del self.colors[i]
+                # del self.colors[i]
 
         database.execute("DROP TABLE IF EXISTS `doc_result`")
         database.execute(sql_create)
@@ -287,10 +286,8 @@ class Docs(QtWidgets.QWidget):
                     files.append(name)
             files = tuple(files)
 
-
             for key in self.keyButtons.keys():
                 database.execute(insert_doc.format(key, files, len(key)))
-
 
             records = database.execute(sql_select)
             if records:
@@ -309,11 +306,10 @@ class Docs(QtWidgets.QWidget):
                         else:
                             rates[key] = 0
 
-
-                    #print(rates)
+                    # print(rates)
 
                     colors = self.colors
-                    #print(colors)
+                    # print(colors)
 
                     wid = Rate()
                     wid.setValue(rates)
@@ -325,9 +321,7 @@ class Docs(QtWidgets.QWidget):
                     self.gridLayout_2.addWidget(wid, i, 1, 1, 1)
                     i = i + 1
                     self.contentButtons[record[0]] = but
-                    self.rate[record[0]]=wid
-
-
+                    self.rate[record[0]] = wid
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

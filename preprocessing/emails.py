@@ -1,11 +1,8 @@
-from pprint import pprint
-
 from tools import database
 from tools.text import remove_newlines, lemmatize, remove_spaces
 
 
 def emails():
-
     database.execute("PRAGMA foreign_keys = OFF;")
     database.execute("DROP TABLE IF EXISTS `emailheaders_info`")
     database.execute("PRAGMA foreign_keys = ON;")
@@ -38,7 +35,6 @@ def emails():
 
 
 def emails_graph():
-
     database.execute("PRAGMA foreign_keys = OFF;")
     database.execute("DROP TABLE IF EXISTS `email_addresses`")
     database.execute("PRAGMA foreign_keys = ON;")

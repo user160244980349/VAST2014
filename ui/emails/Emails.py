@@ -1,9 +1,10 @@
-from PyQt5 import QtCore, QtWidgets
 from random import randint
+
 import numpy as np
-from ui.emails.mlpEmails import  prepare_canvas, plot_draw_lines
+from PyQt5 import QtCore, QtWidgets
+
 from tools import database
-import config
+from ui.emails.mlpEmails import prepare_canvas, plot_draw_lines
 
 sql_create = '''CREATE TABLE `email_result` (
         sender text,
@@ -74,7 +75,7 @@ class Emails(QtWidgets.QWidget):
         self.colors = {}
 
     def initUI(self, Form):
-        #***  статические компоненты из дизайнера******
+        # ***  статические компоненты из дизайнера******
         Form.setObjectName("Form")
         Form.resize(988, 896)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(Form)
@@ -184,7 +185,7 @@ class Emails(QtWidgets.QWidget):
         self.horizontalLayout_2.addWidget(self.scrollArea)
         self.horizontalLayout_2.setStretch(0, 2)
 
-        #***список #адресов**********
+        # ***список #адресов**********
         self.add_addresses(Form)
 
         # создание канвы для графика
@@ -193,8 +194,6 @@ class Emails(QtWidgets.QWidget):
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
-
-
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
@@ -210,12 +209,12 @@ class Emails(QtWidgets.QWidget):
         self.btnAdd.clicked.connect(self.clickedAdd)
         self.btnFind.clicked.connect(self.clickedFind)
 
-    #динамические виджеты-адреса
+    # динамические виджеты-адреса
     def add_addresses(self, Form):
         for address in all_addresses.keys():
             check = QtWidgets.QCheckBox(self.gbUsers)
             check.setChecked(True)
-            #начальное значение = 75 для читаемости текста на фоне элемента
+            # начальное значение = 75 для читаемости текста на фоне элемента
             c = (randint(75, 255), randint(75, 255), randint(75, 255))
             color = 'rgb({}, {}, {})'.format(c[0], c[1], c[2])
             check.setStyleSheet('''
@@ -230,7 +229,7 @@ class Emails(QtWidgets.QWidget):
             if address in self.addressCheck:
                 self.addressCheck[address].setText(_translate("Form", "{}".format(address)))
 
-    #обработка кнопки Добавить в ключевые слова
+    # обработка кнопки Добавить в ключевые слова
     def clickedAdd(self):
         text = self.txtKey.text()
         if text not in self.keyButtons.keys():
@@ -240,12 +239,12 @@ class Emails(QtWidgets.QWidget):
             self.vaKeys.addWidget(but)
             self.keyButtons[text] = but
 
-    #удаление кнопки с ключевым словом из списка
+    # удаление кнопки с ключевым словом из списка
     def clickedKey(self):
         sender = self.sender()
         del self.keyButtons[sender.text()]
         sender.deleteLater()
-    
+
     def clickedFind(self):
         database.execute("DROP TABLE IF EXISTS `email_result`")
         database.execute(sql_create)
@@ -281,8 +280,7 @@ class Emails(QtWidgets.QWidget):
             flux[sender_idx][recipient_idx] += 1
             headers[sender_idx][recipient_idx].append(subject)
         names = list(names.keys())
-        colors = [self.colors[name] for name in names ]
+        colors = [self.colors[name] for name in names]
         self.canvasEmails.setVisible(False)
         plot_draw_lines([names, colors, flux, headers], self.canvasEmails)
         self.canvasEmails.setVisible(True)
-

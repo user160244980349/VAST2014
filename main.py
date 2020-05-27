@@ -10,7 +10,6 @@ from ui.Window import Window
 
 
 def main():
-
     database.connect(config.database)
 
     if not fsys.islocked(config.resources + "/.initialization.lock"):

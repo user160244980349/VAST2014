@@ -1,14 +1,11 @@
-from random import randint
 import datetime
-from PyQt5.QtWidgets import QWidget
+from random import randint
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QWidget
+
 from tools import database
-import config
 from ui.timeline.mlpTimeline import prepare_canvas, plot_draw_lines
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QTableWidgetItem, QHeaderView
-
-
 
 sql_create = '''CREATE TABLE `timeline_result` (
         'date_to_sort' text,
@@ -28,7 +25,7 @@ sql_select = '''
     ORDER BY key, date_to_sort
 '''
 
-sql_select_content =  ''' 
+sql_select_content = ''' 
     SELECT content
     FROM
         `timeline_result`
@@ -38,7 +35,7 @@ sql_select_content =  '''
         key = '{1}'    
 '''
 
-sql_select_header =  ''' 
+sql_select_header = ''' 
     SELECT header
     FROM
         `timeline_result`
@@ -100,7 +97,7 @@ class Timeline(QWidget):
         self.initUi(self)
         self.add_events()
 
-    #динамические контролы (ключевые слова + цвета)
+    # динамические контролы (ключевые слова + цвета)
     def init_dynamicUI(self):
         self.keyButtons = {}
         self.colors = {}
@@ -225,7 +222,6 @@ class Timeline(QWidget):
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
@@ -283,10 +279,10 @@ class Timeline(QWidget):
                 end = self.deEnd.date().toString('yyyyMMdd')
                 database.execute(insert_timelines.format(key, start, end, len(key)))
 
-            #получение результатов из базы
+            # получение результатов из базы
             records = database.execute(sql_select)
 
-            #подготовка данных для графика
+            # подготовка данных для графика
             lines = {}
             for item in records:
                 date, key, rate = tuple(item)

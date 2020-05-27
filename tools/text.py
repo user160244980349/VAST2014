@@ -1,5 +1,4 @@
 import re
-
 import nltk
 from dateutil.parser import parse
 from nltk import word_tokenize, WordNetLemmatizer
