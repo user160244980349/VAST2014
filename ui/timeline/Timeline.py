@@ -76,21 +76,26 @@ insert_timelines = '''
         date_to_sort
 '''
 
-#получение списка имен собственных
-database.connect(config.database)
-query = "select lastname, firstname from file_employeerecords"
-records = database.execute(query)
+records = None
+all_names = None
 
-#словарь  списка имен собственных
-all_names = []
-if records:
-    for record in records:
-        all_names.append(record[0])
-        all_names.append(record[1])
 
 class Timeline(QWidget):
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
+
+        global records
+        global all_names
+
+        query = "select lastname, firstname from file_employeerecords"
+        records = database.execute(query)
+
+        all_names = []
+        if records:
+            for record in records:
+                all_names.append(record[0])
+                all_names.append(record[1])
+
         self.init_dynamicUI()
         self.initUi(self)
         self.add_events()

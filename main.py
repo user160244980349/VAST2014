@@ -11,9 +11,6 @@ from ui.Window import Window
 
 def main():
 
-    app = QtWidgets.QApplication([])
-    window = Window()
-
     database.connect(config.database)
 
     if not fsys.islocked(config.resources + "/.initialization.lock"):
@@ -24,8 +21,9 @@ def main():
         preprocessing()
         fsys.lock(config.resources + "/.preprocessing.lock")
 
+    app = QtWidgets.QApplication([])
+    window = Window()
     window.show()
-
     sys.exit(app_exit(app))
 
 

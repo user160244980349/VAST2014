@@ -44,21 +44,26 @@ sql_select_rate = '''
 
 sql_select_content = '''SELECT content FROM doc_result WHERE name={}'''
 
-#получение списка адресов
-database.connect(config.database)
-query = "select id, address from email_addresses"
-records = database.execute(query)
+records = None
+all_addresses = None
 
-#словарь емейлов и id
-all_addresses = {}
-if records:
-    for record in records:
-        all_addresses[record[1]] = record[0]
 
 class Emails(QtWidgets.QWidget):
 
     def __init__(self, parent):
         super(QtWidgets.QWidget, self).__init__(parent)
+
+        global records
+        global all_addresses
+
+        query = "select id, address from email_addresses"
+        records = database.execute(query)
+
+        all_addresses = {}
+        if records:
+            for record in records:
+                all_addresses[record[1]] = record[0]
+
         self.init_dynamicUI()
         self.initUI(self)
         self.add_events()
