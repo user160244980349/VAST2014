@@ -16,7 +16,7 @@ def files(cfiles):
 
     rows = []
     for file in cfiles:
-        f = open(file, "r")
+        f = open(file, "r", encoding='latin1')
         rows.append('(' + ','.join([
             "\"%s\"" % value for value in [fsys.name(file), file, remove_quotes(f.read())]
         ]) + ')')
@@ -38,7 +38,7 @@ def csvs(cfiles):
             database.execute("DROP TABLE IF EXISTS `%s`" % table)
             database.execute("PRAGMA foreign_keys = ON;")
 
-            with open(file, 'r') as f:
+            with open(file, 'r', encoding='latin1') as f:
                 reader = csv.reader(f, delimiter=',')
                 columns = next(reader)
 
